@@ -4,11 +4,11 @@
 ### 作業內容
 #### 1 專案架構圖
 #### 2 csv檔案輸出
-hw2.jpg
-evaluationAgent.py
+evaluationAgent.py 記錄答題結果後匯出成csv檔 
 #### 3 社群網站登入
+postai.py 可發貼文
 #### 4 pdf生成
-
+PDF.py根據csv檔製作pdf並匯出
 ## AI 英檢考試複習系統
 
 ### 1. 專案概述
