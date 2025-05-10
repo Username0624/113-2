@@ -1,0 +1,13 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Start Test</title>
+</head>
+<body>
+    <h1>Welcome to the Vocabulary Test</h1>
+    <form action="{{ url_for('start_test') }}" method="post">
+        <button type="submit">Start Test</button>
+    </form>
+</body>
+</html>

@@ -1,0 +1,16 @@
+<h2>Result Page</h2>
+<p>Your Score: {{ score }} / {{ total }}</p>
+<hr>
+
+{% for item in question_answer_pairs %}
+  <p><strong>Question:</strong> {{ item.question }}</p>
+  <ul>
+    <li>A. {{ item.options[0] }}</li>
+    <li>B. {{ item.options[1] }}</li>
+    <li>C. {{ item.options[2] }}</li>
+    <li>D. {{ item.options[3] }}</li>
+  </ul>
+  <p><strong>Your Answer:</strong> {{ item.your_answer }} (Option {{ item.your_letter }})</p>
+  <p><strong>Correct Answer:</strong> {{ item.correct_answer }} (Option {{ item.correct_letter }})</p>
+  <hr>
+{% endfor %}

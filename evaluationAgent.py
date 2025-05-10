@@ -3,51 +3,54 @@ import pandas as pd
 class EvaluationAgent:
     def __init__(self, categorized_data):
         """初始化評分代理人，接收已分類的試題 DataFrame"""
-        self.data = categorized_data
-        self.results = []  # 存儲測試結果
+        self.data = categorized_data.reset_index(drop=True)  # 確保有連續 index
+        self.results = []  # 存儲測試結果（使用者答題與對錯）
+        self.current_index = 0  # 指示目前正在作答的題號
 
-    def start_test(self):
-        correct_count = 0
-        total_count = 0
-        errors = []
+    def get_total_questions(self):
+        return len(self.data)
 
-        """執行測驗，讓使用者回答問題，並記錄答案是否正確"""
-        if self.data is None or self.data.empty:
-            print("❌ 無法開始測試：試題資料為空")
+    def get_question(self, index):
+        """根據 index 取得某一題資料（題目與選項）"""
+        if 0 <= index < len(self.data):
+            row = self.data.iloc[index]
+            return {
+                'index': index,
+                'question': row['Question'],
+                'options': {
+                    'A': row['OptionA'],
+                    'B': row['OptionB'],
+                    'C': row['OptionC'],
+                    'D': row['OptionD']
+                }
+            }
+        else:
             return None
 
-        print("📌 測試開始！請輸入你的答案：")
-        for index, row in self.data.iterrows():
-            print(f"\n題目 {index + 1}: {row['Question']}")
-            print(f"A. {row['OptionA']}  B. {row['OptionB']}  C. {row['OptionC']}  D. {row['OptionD']}")
-
-            # 輸入驗證，確保答案為 A, B, C, D
-            while True:
-                user_answer = input("你的答案 (A/B/C/D)：").strip().upper()
-                if user_answer in ['A', 'B', 'C', 'D']:
-                    break
-                else:
-                    print("❌ 無效的選項，請重新輸入 A、B、C 或 D")
-
-            total_count += 1
-            correct = (user_answer == row['Answer']) 
-            if correct:
-                correct_count += 1
-            else:
-                errors.append(row)
+    def record_answer(self, index, user_answer):
+        """記錄某一題的使用者答案與正確與否"""
+        if 0 <= index < len(self.data):
+            row = self.data.iloc[index]
+            correct = (user_answer == row['Answer'])
 
             self.results.append({
                 'Question': row['Question'],
                 'Your Answer': user_answer,
                 'Correct Answer': row['Answer'],
                 'Category': row['Category'],
-                'is_correct': correct  # 加入 is_correct 欄位
+                'is_correct': correct
             })
+            return correct
+        return False
+
+    def evaluate(self):
+        """整理答題結果與錯誤題目"""
+        correct_count = sum(1 for r in self.results if r['is_correct'])
+        total_count = len(self.results)
+        errors = [r for r in self.results if not r['is_correct']]
 
         # 儲存結果至 CSV
         df = pd.DataFrame(self.results)
         df.to_csv("test_results.csv", index=False)
-        print("✅ 測驗結果已儲存到 test_results.csv")
 
-        print("\n✅ 測試完成！")
         return correct_count, total_count, errors

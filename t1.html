@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>政敵就是妻子啊_事件選項展示</title>
+  <style>
+    body {
+      background-color: #f3f3f3;
+      font-family: sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    .event-box {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    .choices button {
+      display: block;
+      margin: 10px auto;
+      padding: 10px 20px;
+      border-radius: 20px;
+      border: none;
+      background-color: #43d151;
+      color: rgb(253, 255, 161);
+      cursor: pointer;
+    }
+    .footer-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 30px;
+    }
+    .round-btn {
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      font-size: 20px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    .corner-box {
+      position: fixed;
+      width: 80px;
+      height: 80px;
+      background-color: #ddd;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    #char-box {
+      bottom: 20px;
+      right: 20px;
+    }
+    #item-box {
+      bottom: 20px;
+      left: 20px;
+    }
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+    .overlay-content {
+      background: #fff;
+      padding: 20px;
+      max-width: 500px;
+      border-radius: 10px;
+      position: relative;
+    }
+    .overlay-content h3 {
+      margin-top: 0;
+    }
+    .close-btn {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      background: transparent;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>政敵就是妻子啊_事件選項展示</h1>
+    <div class="event-box" id="event-box">
+      <h2 id="event-title">讓俺尋思</h2>
+      <p id="event-text"></p>
+      <div class="choices" id="choices"></div>
+    </div>
+    <div class="footer-buttons">
+      <div>
+        <button id="back-btn" class="round-btn">←</button>
+        <div style="text-align: center; font-size: 12px;">剩餘次數：<span id="back-count">3</span></div>
+      </div>
+      <button id="next-btn" class="round-btn">→</button>
+    </div>
+  </div>
+
+  <div id="char-box" class="corner-box" onclick="showOverlay('char')">人物</div>
+  <div id="item-box" class="corner-box" onclick="showOverlay('item')">道具</div>
+
+  <div id="char-overlay" class="overlay">
+    <div class="overlay-content">
+      <button class="close-btn" onclick="hideOverlay('char')">X</button>
+      <h3>人物資訊</h3>
+      <div id="char-stats"></div>
+    </div>
+  </div>
+
+  <div id="item-overlay" class="overlay">
+    <div class="overlay-content">
+      <button class="close-btn" onclick="hideOverlay('item')">X</button>
+      <h3>道具欄</h3>
+      <ul id="item-list"></ul>
+    </div>
+  </div>
+
+  <script>
+    
+    const stats = {
+      
+      熱情: 0,
+      模糊的情感: 1
+    };
+
+    const events = {
+      '讓俺尋思': {
+        text: '你在垂釣者書店偶然看見了奈費勒，但他似乎沒注意到你。雖然這傢伙那張嘴很討人厭，但你不得不承認，他的腦子一直都比你好。或許我可以做點什麼？',
+        choices: [
+          { text: '我受夠了!', next: '為什麼不問問反對三呢？' },
+          { text: '誰鳥他啊!', next: '冤家路窄' }
+        ]
+      },
+      '冤家路窄': {
+        text: '你在垂釣者書店偶然看見了奈費勒。他正低頭翻閱著一本古書……',
+        choices: [
+          { text: '這是什麽', next: '回信', item: '書中的字條：上面寫著一處頗為偏僻的可疑地址……' },
+          { text: '狗都不看', next: '回信' }
+        ]
+      },
+      '為什麼不問問反對三呢？': {
+        text: '你真的受夠這個狗蘇丹的狗屎遊戲了……夾在哪本書?',
+        choices: [
+          { text: '如何取悅你的愛人', next: '回信', item: '書中的字條：上面寫著一處頗為偏僻的地址，底下還有一句：我只給你一天的時間' },
+          { text: '虛偽的自由', next: '回信', effect: () => { stats.熱情 += 2; stats.模糊的情感 += 1; } },
+          { text: '宿敵與摯友', next: '回信', item: '書中的字條：上面寫著一處頗為偏僻的可疑地址……', effect: () => { stats.模糊的情感 += 2; } }
+        ]
+      },
+      '回信': {
+        text: '',
+        choices: [
+          { text: '繼續', next: '密會' }
+        ]
+      },
+      '密會': {
+        text: '奈費勒在等你。幽暗的樹蔭下……（劇情根據數值會改變）',
+        choices: [
+          { text: '我是來談正事的', next: '我是來談正事的' },
+          { text: '謝謝 正愁沒人消卡', next: '謝謝 正愁沒人消卡' }
+        ]
+      }
+    };
+
+    let currentEvent = '讓俺尋思';
+    let history = [];
+    let backCount = 3;
+    let items = [];
+    let lastChoice = '';
+
+    function updateCharStats() {
+      const container = document.getElementById('char-stats');
+      container.innerHTML = `
+        <p><strong>熱情：</strong> ${stats.熱情}</p>
+        <p><strong>模糊的情感：</strong> ${stats.模糊的情感}</p>
+      `;
+    }
+
+    function renderEvent(name) {
+      const e = events[name];
+      document.getElementById('event-title').innerText = name;
+
+      if (name === '回信') {
+        if (lastChoice === '宿敵與摯友') {
+          e.text = '你又鬼鬼祟祟的在書店附近徘徊了幾天，終於等到了這傢伙再次來到書店。他早就注意到了你，無奈地嘆了口氣。他就像明示你一樣，書架上攤開著的，也是那本《虛偽的自由》。';
+        } else {
+          e.text = '你又鬼鬼祟祟的在書店附近徘徊了幾天，終於等到了這傢伙再次來到書店。他早就注意到了你，無奈地嘆了口氣。接著就像平常一樣，皺著眉拂袖而去,留下了那本剛剛被翻開的書。你發誓你對他看什麽書一點興趣也沒有,只是不小心瞥見封面上的標題,叫做《虛偽的自由》。';
+        }
+      }
+
+      document.getElementById('event-text').innerText = e.text;
+      const choices = document.getElementById('choices');
+      choices.innerHTML = '';
+      e.choices.forEach(c => {
+        const btn = document.createElement('button');
+        btn.innerText = c.text;
+        btn.onclick = () => {
+          if (c.item) items.push(c.item);
+          if (c.effect) c.effect();
+          lastChoice = c.text;
+          updateCharStats();
+          history.push(currentEvent);
+          currentEvent = c.next;
+          renderEvent(currentEvent);
+        };
+        choices.appendChild(btn);
+      });
+    }
+
+    document.getElementById('back-btn').onclick = () => {
+      if (backCount > 0 && history.length > 0) {
+        currentEvent = history.pop();
+        backCount--;
+        document.getElementById('back-count').innerText = backCount;
+        renderEvent(currentEvent);
+        if (backCount === 0) {
+          document.getElementById('back-btn').style.display = 'none';
+          document.getElementById('next-btn').style.margin = '0 auto';
+        }
+      }
+    };
+
+    function showOverlay(type) {
+      document.getElementById(`${type}-overlay`).style.display = 'flex';
+      if (type === 'item') {
+        const list = document.getElementById('item-list');
+        list.innerHTML = '';
+        items.forEach(i => {
+          const li = document.createElement('li');
+          li.innerText = i;
+          list.appendChild(li);
+        });
+      } else if (type === 'char') {
+        updateCharStats();
+      }
+    }
+
+    function hideOverlay(type) {
+      document.getElementById(`${type}-overlay`).style.display = 'none';
+    }
+
+    renderEvent(currentEvent);
+  </script>
+</body>
+</html>

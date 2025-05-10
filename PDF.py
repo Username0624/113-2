@@ -1,5 +1,5 @@
 import pandas as pd
-from fpdf import FPDF  # 正確的方式
+from fpdf import FPDF 
 
 
 
