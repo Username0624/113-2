@@ -7,8 +7,11 @@
 evaluationAgent.py 記錄答題結果後匯出成csv檔 
 #### 3 社群網站登入
 postai.py 可發貼文
+[image]https://github.com/Username0624/113-2/blob/main/hw3.jpg
 #### 4 pdf生成
 PDF.py根據csv檔製作pdf並匯出
+#### 5 前端生成
+app.py根據csv檔製作pdf並匯出
 ## AI 英檢考試複習系統
 
 ### 1. 專案概述
@@ -90,6 +93,10 @@ PDF.py根據csv檔製作pdf並匯出
 #### 5.1 啟動考試系統
 ```bash
 python main.py
+```
+#### 5.1 啟動前端
+```bash
+python app.py
 ```
 
 #### 5.2 執行流程
