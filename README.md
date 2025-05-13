@@ -11,7 +11,7 @@ postai.py 可發貼文
 #### 4 pdf生成
 PDF.py根據csv檔製作pdf並匯出
 #### 5 前端生成
-app.py根據csv檔製作pdf並匯出
+app.py 前端功能
 ## AI 英檢考試複習系統
 
 ### 1. 專案概述
